@@ -402,16 +402,9 @@ if (userRepository.findByEmail(request.getEmail()).isPresent()) {
 
 
 
-        if(refreshToken.isRevoked()){
-
-
-            throw new RuntimeException(
-                    "Refresh token revoked"
-            );
-
-        }
-
-
+        if (Boolean.TRUE.equals(refreshToken.getRevoked())) {
+    throw new RuntimeException("Refresh token revoked");
+}
 
 
 

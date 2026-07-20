@@ -10,30 +10,30 @@ import com.restaurant.restaurant_backend.repository.PermissionRepository;
 @Component
 public class PermissionSeeder implements CommandLineRunner {
 
-    private final PermissionRepository repository;
+    private final PermissionRepository permissionRepository;
 
-    public PermissionSeeder(PermissionRepository repository) {
-        this.repository = repository;
+    public PermissionSeeder(PermissionRepository permissionRepository) {
+        this.permissionRepository = permissionRepository;
     }
 
     @Override
     public void run(String... args) {
 
-        if(repository.count()==0){
-
-            for(Permission permission : Permission.values()){
-
-                PermissionEntity entity = new PermissionEntity();
-
-                entity.setName(permission);
-
-                repository.save(entity);
-
-            }
-
-            System.out.println("Permissions Seeded");
-
+        if (permissionRepository.count() > 0) {
+            System.out.println("Permissions already exist.");
+            return;
         }
 
+        for (Permission permission : Permission.values()) {
+
+            PermissionEntity entity = new PermissionEntity();
+            entity.setName(permission);
+
+            permissionRepository.save(entity);
+
+            System.out.println("Inserted Permission : " + permission);
+        }
+
+        System.out.println("Permissions Seeded Successfully");
     }
 }

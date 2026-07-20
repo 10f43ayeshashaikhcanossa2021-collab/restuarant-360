@@ -34,9 +34,7 @@ public class BranchService {
 
         branch.setName(request.getName());
         branch.setAddress(request.getAddress());
-        branch.setCity(request.getCity());
-        branch.setState(request.getState());
-        branch.setCountry(request.getCountry());
+        
         branch.setPhone(request.getPhone());
         branch.setEmail(request.getEmail());
 
@@ -70,9 +68,7 @@ public class BranchService {
 
         branch.setName(request.getName());
         branch.setAddress(request.getAddress());
-        branch.setCity(request.getCity());
-        branch.setState(request.getState());
-        branch.setCountry(request.getCountry());
+        
         branch.setPhone(request.getPhone());
         branch.setEmail(request.getEmail());
 
@@ -98,12 +94,10 @@ public class BranchService {
         response.setId(branch.getId());
         response.setName(branch.getName());
         response.setAddress(branch.getAddress());
-        response.setCity(branch.getCity());
-        response.setState(branch.getState());
-        response.setCountry(branch.getCountry());
+        
         response.setPhone(branch.getPhone());
         response.setEmail(branch.getEmail());
-        response.setActive(branch.isActive());
+        response.setActive(branch.getActive());
 
         return response;
     }

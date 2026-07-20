@@ -1,46 +1,45 @@
 package com.restaurant.restaurant_backend.controller;
 
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.restaurant.restaurant_backend.entity.RoleEntity;
+import com.restaurant.restaurant_backend.entity.User;
+import com.restaurant.restaurant_backend.repository.RoleRepository;
+import com.restaurant.restaurant_backend.repository.UserRepository;
+
 @RestController
+@RequestMapping("/api/admin")
 public class AdminController {
 
-    @GetMapping("/api/admin")
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public String admin() {
-        return "Welcome Super Admin";
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+
+    public AdminController(UserRepository userRepository,
+                           RoleRepository roleRepository) {
+
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
     }
-    @GetMapping("/api/owner")
-@PreAuthorize("hasAnyRole('OWNER','SUPER_ADMIN')")
-public String owner() {
 
-    return "Welcome Owner";
+    @PutMapping("/assign-role/{userId}/{roleName}")
+    @PreAuthorize("hasAuthority('USER_UPDATE')")
+    public String assignRole(@PathVariable Long userId,
+                             @PathVariable String roleName) {
 
-}
-@GetMapping("/api/cashier")
-@PreAuthorize("hasRole('CASHIER')")
-public String cashier() {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-    return "Cashier Dashboard";
+        RoleEntity role = roleRepository.findByName(roleName)
+                .orElseThrow(() -> new RuntimeException("Role not found"));
 
+        user.setRole(role);
 
-}
-@GetMapping("/api/chef")
-@PreAuthorize("hasRole('CHEF')")
-public String chef() {
+        userRepository.save(user);
 
-    return "Kitchen Dashboard";
-
-}
-@GetMapping("/api/create-user")
-@PreAuthorize("hasAuthority('USER_CREATE')")
-public String createUserPermission() {
-
-    return "Permission USER_CREATE Granted";
-
-}
-
-
+        return "Role assigned successfully";
+    }
 }

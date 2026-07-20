@@ -60,6 +60,10 @@ public UserDetails loadUserByUsername(String email)
     return new org.springframework.security.core.userdetails.User(
             user.getEmail(),
             user.getPassword(),
+             user.isActive(),   // enabled
+        true,              // accountNonExpired
+        true,              // credentialsNonExpired
+        true,      
             authorities
     );
 }

@@ -10,30 +10,30 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/users")
-public class UserController {
+@RequestMapping("/api/menu")
+public class MenuController {
 
     @GetMapping
-    @PreAuthorize("hasAuthority('USER_VIEW')")
-    public String getUsers() {
-        return "All Users";
+    @PreAuthorize("hasAuthority('MENU_VIEW')")
+    public String getMenu() {
+        return "Menu List";
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('USER_CREATE')")
-    public String createUser() {
-        return "User Created";
+    @PreAuthorize("hasAuthority('MENU_CREATE')")
+    public String createMenu() {
+        return "Menu Created";
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('USER_UPDATE')")
-    public String updateUser(@PathVariable Long id) {
-        return "User Updated : " + id;
+    @PreAuthorize("hasAuthority('MENU_UPDATE')")
+    public String updateMenu(@PathVariable Long id) {
+        return "Menu Updated : " + id;
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('USER_DELETE')")
-    public String deleteUser(@PathVariable Long id) {
-        return "User Deleted : " + id;
+    @PreAuthorize("hasAuthority('MENU_DELETE')")
+    public String deleteMenu(@PathVariable Long id) {
+        return "Menu Deleted : " + id;
     }
 }

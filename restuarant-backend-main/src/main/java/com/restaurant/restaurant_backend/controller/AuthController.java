@@ -3,6 +3,7 @@ import java.security.Principal;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.restaurant.restaurant_backend.dto.ChangePasswordRequest;
 import com.restaurant.restaurant_backend.dto.ForgotPasswordRequest;
 import com.restaurant.restaurant_backend.dto.GoogleLoginRequest;
+import com.restaurant.restaurant_backend.dto.GoogleLoginResponse;
 import com.restaurant.restaurant_backend.dto.LoginRequest;
 import com.restaurant.restaurant_backend.dto.LoginResponse;
 import com.restaurant.restaurant_backend.dto.LogoutRequest;
@@ -64,9 +66,13 @@ public RefreshResponse pinLogin(
 }
 
     @PostMapping("/refresh")
-    public RefreshResponse refresh(@RequestBody RefreshRequest request) {
-        return authenticationService.refreshToken(request);
-    }
+public ResponseEntity<RefreshResponse> refreshToken(
+        @RequestBody RefreshRequest request) {
+
+    return ResponseEntity.ok(
+            authenticationService.refreshToken(request)
+    );
+}
 @PostMapping("/register")
 public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
 
@@ -96,15 +102,15 @@ public ResponseEntity<String> logout(
 
     authenticationService.logout(request);
 
-    return ResponseEntity.ok("Logged out successfully");
+    return ResponseEntity.ok("Logout Successful");
 }
 @GetMapping("/me")
-public UserResponse currentUser(Principal principal) {
+public ResponseEntity<UserResponse> getCurrentUser(
+        Authentication authentication) {
 
-    return authenticationService.getCurrentUser(
-            principal.getName()
+    return ResponseEntity.ok(
+            authenticationService.getCurrentUser(authentication.getName())
     );
-
 }
 @PostMapping("/change-password")
 public ResponseEntity<String> changePassword(
@@ -120,8 +126,9 @@ public ResponseEntity<String> changePassword(
     return ResponseEntity.ok("Password changed successfully");
 }
 @PostMapping("/google")
-public ResponseEntity<?> googleLogin(
-        @RequestBody GoogleLoginRequest request) throws Exception {
+public ResponseEntity<GoogleLoginResponse> googleLogin(
+        @RequestBody GoogleLoginRequest request)
+        throws Exception {
 
     return ResponseEntity.ok(
             authenticationService.googleLogin(request)

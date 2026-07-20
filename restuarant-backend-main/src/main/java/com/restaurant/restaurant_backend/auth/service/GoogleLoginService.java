@@ -1,4 +1,4 @@
-package com.restaurant.restaurant_backend.service;
+package com.restaurant.restaurant_backend.auth.service;
 
 import java.util.Collections;
 

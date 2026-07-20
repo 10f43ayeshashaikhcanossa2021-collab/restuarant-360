@@ -1,4 +1,6 @@
 package com.restaurant.restaurant_backend.entity;
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -7,7 +9,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-
 @Entity
 @Table(name = "users")
 public class User {
@@ -32,6 +33,9 @@ private Terminal terminal;
     @Column(length = 255)
 private String pin;
 private boolean active=true;
+private int failedLoginAttempts = 0;
+
+private LocalDateTime accountLockedUntil;
 
 public boolean isActive() {
     return active;
@@ -98,7 +102,13 @@ public Outlet getOutlet() {
     public String getPin() {
     return pin;
 }
+public int getFailedLoginAttempts() {
+    return failedLoginAttempts;
+}
 
+public LocalDateTime getAccountLockedUntil() {
+    return accountLockedUntil;
+}
 
     public RoleEntity getRole() {
         return role;
@@ -147,7 +157,13 @@ public void setOutlet(Outlet outlet) {
     this.pin = pin;
 }
 
+public void setFailedLoginAttempts(int failedLoginAttempts) {
+    this.failedLoginAttempts = failedLoginAttempts;
+}
 
+public void setAccountLockedUntil(LocalDateTime accountLockedUntil) {
+    this.accountLockedUntil = accountLockedUntil;
+}
 
     public void setRole(RoleEntity role) {
         this.role=role;
