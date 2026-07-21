@@ -11,11 +11,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.Data;
 
 @Entity
 @Table(name = "refresh_tokens")
-@Data
 public class RefreshToken {
 
     @Id
@@ -25,17 +23,65 @@ public class RefreshToken {
     @Column(nullable = false, unique = true, length = 500)
     private String token;
 
-    @Column(nullable = false)
-    private LocalDateTime expiryDate;
-
-    @Column(nullable = false)
-    private Boolean revoked = false;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(nullable = false)
+    private LocalDateTime expiryDate;
+
+    @Column(nullable = false)
+    private boolean revoked = false;
+
+    @Column(nullable = false)
+    private boolean expired = false;
+
+    public RefreshToken() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getToken() {
+        return token;
+    }
+public Boolean getRevoked(){
+    return revoked;
+}
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public LocalDateTime getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(LocalDateTime expiryDate) {
+        this.expiryDate = expiryDate;
+    }
+
+    public boolean isRevoked() {
+        return revoked;
+    }
+
+    public void setRevoked(boolean revoked) {
+        this.revoked = revoked;
+    }
+
+    public boolean isExpired() {
+        return expired;
+    }
+
+    public void setExpired(boolean expired) {
+        this.expired = expired;
+    }
 }

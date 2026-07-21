@@ -8,7 +8,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.restaurant.restaurant_backend.entity.RoleEntity;
 import com.restaurant.restaurant_backend.entity.User;
 import com.restaurant.restaurant_backend.repository.RoleRepository;
 import com.restaurant.restaurant_backend.repository.UserRepository;
@@ -24,7 +23,8 @@ public class CustomUserDetailsService implements UserDetailsService {
         this.userRepository = userRepository;this.roleRepository = roleRepository;
     }
 
-   @Override
+  
+@Override
 public UserDetails loadUserByUsername(String email)
         throws UsernameNotFoundException {
 
@@ -32,38 +32,44 @@ public UserDetails loadUserByUsername(String email)
             .orElseThrow(() ->
                     new UsernameNotFoundException("User not found"));
 
-    RoleEntity role = roleRepository
-            .findByName(user.getRole().getName())
-            .orElseThrow(() ->
-                    new RuntimeException("Role not found"));
+    List<SimpleGrantedAuthority> authorities = new ArrayList<>();
 
-    List<SimpleGrantedAuthority> authorities =
-            new ArrayList<>();
+    // Add all roles
+    user.getRoles().forEach(role -> {
 
-    // Add Role
-    authorities.add(
-            new SimpleGrantedAuthority(
-                    "ROLE_" + role.getName()
-            )
-    );
+        authorities.add(
+                new SimpleGrantedAuthority(
+                        "ROLE_" + role.getName()
+                )
+        );
 
-    // Add Permissions
-    role.getPermissions().forEach(permission ->
+        // Add permissions of each role
+        role.getPermissions().forEach(permission ->
 
-            authorities.add(
-                    new SimpleGrantedAuthority(
-                            permission.getName().name()
-                    )
-            )
-    );
+                authorities.add(
+                        new SimpleGrantedAuthority(
+                                permission.getName().name()
+                        )
+                )
+        );
+
+    });
 
     return new org.springframework.security.core.userdetails.User(
+
             user.getEmail(),
+
             user.getPassword(),
-             user.isActive(),   // enabled
-        true,              // accountNonExpired
-        true,              // credentialsNonExpired
-        true,      
+
+            user.isActive(),
+
+            true,
+
+            true,
+
+            user.getAccountLockedUntil() == null
+                    || user.getAccountLockedUntil().isBefore(java.time.LocalDateTime.now()),
+
             authorities
     );
 }

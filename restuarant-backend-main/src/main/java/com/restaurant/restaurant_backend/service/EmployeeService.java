@@ -1,9 +1,9 @@
 package com.restaurant.restaurant_backend.service;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.restaurant.restaurant_backend.dto.EmployeeRequest;
@@ -18,45 +18,52 @@ import com.restaurant.restaurant_backend.repository.RoleRepository;
 
 @Service
 public class EmployeeService {
+        
 
     private final EmployeeRepository employeeRepository;
     private final BranchRepository branchRepository;
     private final RoleRepository roleRepository;
-
+private final PasswordEncoder passwordEncoder;
     public EmployeeService(EmployeeRepository employeeRepository,
                            BranchRepository branchRepository,
-                           RoleRepository roleRepository) {
+                           RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.employeeRepository = employeeRepository;
         this.branchRepository = branchRepository;
-        this.roleRepository = roleRepository;
+        this.roleRepository = roleRepository;this.passwordEncoder = passwordEncoder;
     }
 
     // Create Employee
-    public EmployeeResponse createEmployee(EmployeeRequest request) {
+    public EmployeeResponse updateEmployee(Long id, EmployeeRequest request) {
 
-        if (employeeRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Employee email already exists");
-        }
+    Employee employee = employeeRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Employee not found"));
 
-        Branch branch = branchRepository.findById(request.getBranchId())
-                .orElseThrow(() -> new RuntimeException("Branch not found"));
-
-        RoleEntity role = roleRepository.findByName(request.getRole())
-                .orElseThrow(() -> new RuntimeException("Role not found"));
-
-        Employee employee = new Employee();
-
-        employee.setFullName(request.getFullName());
-        employee.setEmail(request.getEmail());
-        employee.setPhone(request.getPhone());
-        employee.setRole(role);
-        employee.setBranch(branch);
-        employee.setActive(true);
-
-        Employee saved = employeeRepository.save(employee);
-
-        return mapToResponse(saved);
+    if (!employee.getEmployeeCode().equals(request.getEmployeeCode())
+            && employeeRepository.existsByEmployeeCode(request.getEmployeeCode())) {
+        throw new RuntimeException("Employee code already exists");
     }
+
+    Branch branch = branchRepository.findById(request.getBranchId())
+            .orElseThrow(() -> new RuntimeException("Branch not found"));
+
+   RoleEntity role = roleRepository.findByName(request.getRole().name())
+        .orElseThrow(() -> new RuntimeException("Role not found"));
+
+    employee.setEmployeeCode(request.getEmployeeCode());
+    employee.setFullName(request.getFullName());
+    employee.setEmail(request.getEmail());
+    employee.setPhone(request.getPhone());
+    employee.setRole(role);
+    employee.setBranch(branch);
+
+    if (request.getPin() != null && !request.getPin().isBlank()) {
+        employee.setPinHash(passwordEncoder.encode(request.getPin()));
+    }
+
+    Employee updated = employeeRepository.save(employee);
+
+    return mapToResponse(updated);
+}
 
     // Get All Employees
     public List<EmployeeResponse> getAllEmployees() {
@@ -76,28 +83,40 @@ public class EmployeeService {
     }
 
     // Update Employee
-    public EmployeeResponse updateEmployee(Long id,
-                                           EmployeeRequest request) {
+   public EmployeeResponse createEmployee(EmployeeRequest request) {
 
-        Employee employee = employeeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Employee not found"));
-
-        Branch branch = branchRepository.findById(request.getBranchId())
-                .orElseThrow(() -> new RuntimeException("Branch not found"));
-
-        RoleEntity role = roleRepository.findByName(request.getRole())
-                .orElseThrow(() -> new RuntimeException("Role not found"));
-
-        employee.setFullName(request.getFullName());
-        employee.setEmail(request.getEmail());
-        employee.setPhone(request.getPhone());
-        employee.setRole(role);
-        employee.setBranch(branch);
-
-        Employee updated = employeeRepository.save(employee);
-
-        return mapToResponse(updated);
+    if (employeeRepository.existsByEmail(request.getEmail())) {
+        throw new RuntimeException("Employee email already exists");
     }
+
+    if (employeeRepository.existsByEmployeeCode(request.getEmployeeCode())) {
+        throw new RuntimeException("Employee code already exists");
+    }
+
+    Branch branch = branchRepository.findById(request.getBranchId())
+            .orElseThrow(() -> new RuntimeException("Branch not found"));
+
+    RoleEntity role = roleRepository.findByName(request.getRole().name())
+        .orElseThrow(() -> new RuntimeException("Role not found"));
+
+    Employee employee = new Employee();
+
+    employee.setEmployeeCode(request.getEmployeeCode());
+    employee.setFullName(request.getFullName());
+    employee.setEmail(request.getEmail());
+    employee.setPhone(request.getPhone());
+    employee.setRole(role);
+    employee.setBranch(branch);
+    employee.setActive(true);
+
+    if (request.getPin() != null && !request.getPin().isBlank()) {
+        employee.setPinHash(passwordEncoder.encode(request.getPin()));
+    }
+
+    Employee saved = employeeRepository.save(employee);
+
+    return mapToResponse(saved);
+}
 
     // Delete Employee
     public void deleteEmployee(Long id) {

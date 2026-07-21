@@ -13,52 +13,62 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name="roles")
+@Table(
+    name = "roles",
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = "name")
+    }
+)
 public class RoleEntity {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique=true)
+    @Column(nullable = false, unique = true, length = 50)
     private String name;
 
+    @Column(length = 255)
+    private String description;
+
     @ManyToMany(fetch = FetchType.EAGER)
-
     @JoinTable(
-        name="role_permissions",
-
-        joinColumns=@JoinColumn(name="role_id"),
-
-        inverseJoinColumns=@JoinColumn(name="permission_id")
+            name = "role_permissions",
+            joinColumns = @JoinColumn(name = "role_id"),
+            inverseJoinColumns = @JoinColumn(name = "permission_id")
     )
+    private Set<PermissionEntity> permissions = new HashSet<>();
 
-    private Set<PermissionEntity> permissions =
-            new HashSet<>();
+    public RoleEntity() {}
 
-    public RoleEntity(){}
-
-    public Long getId(){
+    public Long getId() {
         return id;
     }
 
-    public String getName(){
+    public String getName() {
         return name;
     }
 
-    public void setName(String name){
-        this.name=name;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public Set<PermissionEntity> getPermissions(){
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Set<PermissionEntity> getPermissions() {
         return permissions;
     }
 
-    public void setPermissions(
-            Set<PermissionEntity> permissions){
-        this.permissions=permissions;
+    public void setPermissions(Set<PermissionEntity> permissions) {
+        this.permissions = permissions;
     }
-
 }

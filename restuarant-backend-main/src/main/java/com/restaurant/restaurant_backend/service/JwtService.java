@@ -15,25 +15,30 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtService {
 
-    // Replace this with a secure key later (we'll move it to application.properties)
     private static final String SECRET =
             "mySuperSecretKeyForJwtAuthenticationMustBeAtLeast32CharactersLong";
 
     private final SecretKey key = Keys.hmacShaKeyFor(SECRET.getBytes());
+
 
     public String generateToken(UserDetails userDetails) {
 
         return Jwts.builder()
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
+                .expiration(
+                    new Date(System.currentTimeMillis() + 1000 * 60 * 60)
+                )
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
+
     public String extractUsername(String token) {
+
         return extractAllClaims(token).getSubject();
     }
+
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
 
@@ -43,12 +48,14 @@ public class JwtService {
                 && !isTokenExpired(token);
     }
 
+
     private boolean isTokenExpired(String token) {
 
         return extractAllClaims(token)
                 .getExpiration()
                 .before(new Date());
     }
+
 
     private Claims extractAllClaims(String token) {
 

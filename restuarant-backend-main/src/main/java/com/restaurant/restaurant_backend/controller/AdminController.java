@@ -36,7 +36,7 @@ public class AdminController {
         RoleEntity role = roleRepository.findByName(roleName)
                 .orElseThrow(() -> new RuntimeException("Role not found"));
 
-        user.setRole(role);
+        user.getRoles().add(role);
 
         userRepository.save(user);
 

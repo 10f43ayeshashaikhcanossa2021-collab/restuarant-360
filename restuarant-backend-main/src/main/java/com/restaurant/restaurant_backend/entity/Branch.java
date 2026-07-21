@@ -28,4 +28,5 @@ public class Branch {
 
     @Column(nullable = false)
     private Boolean active = true;
+
 }

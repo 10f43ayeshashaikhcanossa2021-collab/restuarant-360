@@ -11,19 +11,17 @@ import com.restaurant.restaurant_backend.entity.Employee;
 
 
 @Repository
-public interface EmployeeRepository 
-        extends JpaRepository<Employee, Long> {
-
-
-    Optional<Employee> findByEmail(String email);
-
-
-    Optional<Employee> findByEmployeeCode(String employeeCode);
-
+public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
     boolean existsByEmail(String email);
 
+    boolean existsByEmployeeCode(String employeeCode);
+
+    Optional<Employee> findByEmail(String email);
+
+    Optional<Employee> findByEmployeeCode(String employeeCode);
 
     List<Employee> findByBranch(Branch branch);
 
+    List<Employee> findByActive(Boolean active);
 }

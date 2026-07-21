@@ -12,7 +12,7 @@ import com.restaurant.restaurant_backend.repository.UserRepository;
 
 @Service
 public class PasswordResetService {
-
+   
     private final UserRepository userRepository;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final PasswordEncoder passwordEncoder;
@@ -60,7 +60,7 @@ public void resetPassword(String token, String newPassword) {
                     .orElseThrow(() ->
                             new RuntimeException("Invalid token"));
 
-    if (resetToken.isUsed()) {
+    if (resetToken.getUsed()) {
         throw new RuntimeException("Token already used");
     }
 
@@ -78,4 +78,5 @@ public void resetPassword(String token, String newPassword) {
 
     passwordResetTokenRepository.save(resetToken);
 }
+
 }

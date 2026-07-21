@@ -16,6 +16,7 @@ import com.restaurant.restaurant_backend.dto.LogoutRequest;
 import com.restaurant.restaurant_backend.dto.PinLoginRequest;
 import com.restaurant.restaurant_backend.dto.RefreshRequest;
 import com.restaurant.restaurant_backend.dto.RefreshResponse;
+import com.restaurant.restaurant_backend.dto.RefreshTokenResponse;
 import com.restaurant.restaurant_backend.dto.RegisterRequest;
 import com.restaurant.restaurant_backend.dto.UserResponse;
 import com.restaurant.restaurant_backend.entity.RefreshToken;
@@ -344,7 +345,7 @@ if (userRepository.findByEmail(request.getEmail()).isPresent()) {
 
 
 
-        user.setRole(role);
+       user.getRoles().add(role);
 
 
 
@@ -394,10 +395,9 @@ if (userRepository.findByEmail(request.getEmail()).isPresent()) {
 
         RefreshToken refreshToken =
 
-                refreshTokenService
-                .findByToken(
-                        request.getRefreshToken()
-                );
+                refreshTokenService.findByToken(
+    request.getRefreshToken()
+);
 
 
 
@@ -531,11 +531,11 @@ if (userRepository.findByEmail(request.getEmail()).isPresent()) {
 
 
 
-
-        RoleEntity role =
-
-                user.getRole();
-
+RoleEntity role = user.getRoles()
+        .stream()
+        .findFirst()
+        .orElseThrow(() ->
+                new RuntimeException("No role assigned"));
 
 
 
@@ -714,7 +714,7 @@ if (userRepository.findByEmail(request.getEmail()).isPresent()) {
                 .orElseThrow(() ->
                         new RuntimeException("CUSTOMER role not found"));
 
-        user.setRole(role);
+        user.getRoles().add(role);
 
         user = userRepository.save(user);
     }
@@ -734,8 +734,14 @@ if (userRepository.findByEmail(request.getEmail()).isPresent()) {
     response.setRefreshToken(refreshToken.getToken());
     response.setFullName(user.getFullName());
     response.setEmail(user.getEmail());
-    response.setRole(user.getRole().getName());
-
+   response.setRole(
+        user.getRoles()
+                .stream()
+                .findFirst()
+                .orElseThrow(() ->
+                        new RuntimeException("No role assigned"))
+                .getName()
+);
     return response;
 }
 

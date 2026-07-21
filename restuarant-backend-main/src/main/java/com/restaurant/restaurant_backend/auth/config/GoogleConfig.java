@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class GoogleConfig {
 
-    @Value("${google.client-id}")
+    @Value("${google.client.id}")
     private String clientId;
 
     public String getClientId() {

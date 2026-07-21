@@ -8,6 +8,12 @@ public enum Permission {
     USER_DELETE,
     USER_VIEW,
 
+    // ROLE
+    ROLE_CREATE,
+    ROLE_UPDATE,
+    ROLE_DELETE,
+    ROLE_VIEW,
+
     // MENU
     MENU_CREATE,
     MENU_UPDATE,
@@ -25,10 +31,10 @@ public enum Permission {
     // REPORT
     REPORT_VIEW,
 
-    // INVENTORY
+    // STOCK
     STOCK_UPDATE,
 
-    // KITCHEN
+    // KOT
     KOT_UPDATE,
 
     // OUTLET

@@ -47,17 +47,7 @@ public class AuthController {
     public RefreshResponse login(@RequestBody LoginRequest request) {
         return authenticationService.authenticateWithRefresh(request);
     }
-    @PostMapping("/forgot-password")
-public ResponseEntity<String> forgotPassword(
-        @RequestBody ForgotPasswordRequest request) {
-
-    String token =
-            passwordResetService.forgotPassword(
-                    request.getEmail()
-            );
-
-    return ResponseEntity.ok(token);
-}
+   
 @PostMapping("/pin-login")
 public RefreshResponse pinLogin(
         @RequestBody PinLoginRequest request) {
@@ -85,17 +75,9 @@ public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
                 .body(e.getMessage());
     }
 }
-@PostMapping("/reset-password")
-public ResponseEntity<String> resetPassword(
-        @RequestBody ResetPasswordRequest request) {
 
-    passwordResetService.resetPassword(
-            request.getToken(),
-            request.getNewPassword()
-    );
 
-    return ResponseEntity.ok("Password changed successfully");
-}
+
     @PostMapping("/logout")
 public ResponseEntity<String> logout(
         @RequestBody LogoutRequest request) {
@@ -134,5 +116,26 @@ public ResponseEntity<GoogleLoginResponse> googleLogin(
             authenticationService.googleLogin(request)
     );
 }
+@PostMapping("/forgot-password")
+public ResponseEntity<String> forgotPassword(
+        @RequestBody ForgotPasswordRequest request) {
 
+    String token =
+            passwordResetService.forgotPassword(
+                    request.getEmail());
+
+    return ResponseEntity.ok(
+            "Password reset token: " + token);
+}
+@PostMapping("/reset-password")
+public ResponseEntity<String> resetPassword(
+        @RequestBody ResetPasswordRequest request) {
+
+    passwordResetService.resetPassword(
+            request.getToken(),
+            request.getNewPassword());
+
+    return ResponseEntity.ok(
+            "Password reset successful.");
+}
 }
